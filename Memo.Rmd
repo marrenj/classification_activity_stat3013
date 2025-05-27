@@ -1,0 +1,50 @@
+---
+title: "Classification Data Activity - Memo"
+author: "Marren Jenkins"
+date: '2022-05-31'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## The Data
+
+The data for this project was given to us in a clean and tidy format, with very little missingness. Therefore, not much preprocessing was necessary. When reading in the data, I made many of the character vectors into factors, and made sure that the levels were clearly labeled. Preprocessing for the classification dataset was very similar to preprocessing for the regression dataset.
+
+## Feature Engineering 
+
+The dataset given to us had more than 35 predictors, many of which I did not find necessary for inclusion in my models. First of all, categorical variables like `id` and `addr_state` had far too many levels for inclusion in any model. After some quick and simple exploration of the training set, other variables seemed not to be entirely related to the outcome variable, at least in their initial form. While I would normally remove these variables when creating a recipe (using `step_rm()`), my recipes were giving me some issues while working in R. Therefore, in order to avoid future problems while building my models, I removed these variables from the dataset itself. 
+
+I created a new variable during the feature engineering process called `debt`. I created `debt` by multiplying `dti` * `annual_inc`, in order to get each applicant's total debt. 
+
+I eventually narrowed down the features to just `term`, `int_rate`, `out_prncp_inv`, `loan_amnt`, and `debt` because I wanted to focus on having a smaller feature space. 
+
+
+## Model Building and Selection
+
+Since the data were already given to us as two separate training and testing sets, I decided not to further split the training set. I used 10-fold cross validation with 5 repeats across all models I created. 
+
+### Bagged Random Forest
+
+My first selected model is a bagged random forest model called `bagged_rf_model1` in my GitHub repository. I created this model using the `rpart` package, using 25 bagged resamples. The tuning parameters specified were `tree_depth` and `min_n`, and I optimized on the accuracy of the predictions. 
+
+I fit the winning model to the entire training set before making predictions using the testing set. On the public kaggle board, this model scored an accuracy of **92.825%**. 
+
+### Ensemble Model
+
+My second selected models is an ensemble model called `ensemble_model1` in my GitHub repository. I tuned boosted tree, elastic net, k-nearest neighbors, MARS, and random forest models for inclusion in the model stack. However, the KNN and MARS models all had coefficients of zero after fitting the model stack. Once again, I optimized on the accuracy of the predictions. 
+
+I fit the model stack to the entire training set before making predictions using the testing set. In kaggle, this model scored an accuracy of **91.863%**. 
+
+
+
+
+
+
+
+
+
+
